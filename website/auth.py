@@ -15,10 +15,9 @@ def login():
                 session['name'] = user.name
                 return redirect(url_for('views.loginsuccess')) # redirects to sign up succesful page defined in views   
             else:
-                flash('Invalid password. Try again.', category='error')
+                flash('Invalid password', category='error')
         else:
-            flash('User does not exist. Try again or sign up', category='error')
-
+            flash('User does not exist', category='error')
     return render_template("login.html")
 
 @auth.route('/logout')  # logout
@@ -31,10 +30,12 @@ def sign_up():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            flash('User with that email already exists. Try again.', category='error')
+            flash('User with that email already exists', category='error')
         else:
             name = request.form.get('name')
             password = request.form.get('pass')
+            if password != request.form.get('confirmpass'):
+                flash('Passwords do not match', category='error')
             # TODO: add email/password requirements
             user = User.query.filter_by(email=email).first()
             new_user = User(name=name, email=email, password=password) # TODO: store password as hash
