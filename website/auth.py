@@ -37,10 +37,11 @@ def sign_up():
             if password != request.form.get('confirmpass'):
                 flash('Passwords do not match', category='error')
             # TODO: add email/password requirements
-            user = User.query.filter_by(email=email).first()
-            new_user = User(name=name, email=email, password=password) # TODO: store password as hash
-            db.session.add(new_user)
-            db.session.commit()
-            session['name'] = name # saves name to be passed to signup success page
-            return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
+            else:
+                user = User.query.filter_by(email=email).first()
+                new_user = User(name=name, email=email, password=password) # TODO: store password as hash
+                db.session.add(new_user)
+                db.session.commit()
+                session['name'] = name # saves name to be passed to signup success page
+                return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
     return render_template("signup.html")
