@@ -6,7 +6,19 @@ from . import db
 auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])  # place '/login' in url to go to login page
 def login():
-    data = request.form
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('pass')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            if user.password == password: # TODO: change to check_password_hash = password
+                session['name'] = user.name
+                return redirect(url_for('views.loginsuccess')) # redirects to sign up succesful page defined in views   
+            else:
+                flash('Invalid password. Try again.', category='error')
+        else:
+            flash('User does not exist. Try again or sign up', category='error')
+
     return render_template("login.html")
 
 @auth.route('/logout')  # logout
@@ -16,7 +28,6 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])  # user sign up
 def sign_up():
     if request.method == 'POST': # creates new user from user submitted info when sign up button pressed
-        print("!!")
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('pass')
@@ -24,6 +35,6 @@ def sign_up():
         new_user = User(name=name, email=email, password=password) # TODO: store password as hash
         db.session.add(new_user)
         db.session.commit()
-        session['name'] = name
+        session['name'] = name # saves name to be passed to signup success page
         return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
     return render_template("signup.html")
