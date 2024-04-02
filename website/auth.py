@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from .models import User
 from . import db
-#TODO: has password
+#TODO: hash password
 
 auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])  # place '/login' in url to go to login page
@@ -28,13 +28,18 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])  # user sign up
 def sign_up():
     if request.method == 'POST': # creates new user from user submitted info when sign up button pressed
-        name = request.form.get('name')
         email = request.form.get('email')
-        password = request.form.get('pass')
-        # TODO: add email/password requirements
-        new_user = User(name=name, email=email, password=password) # TODO: store password as hash
-        db.session.add(new_user)
-        db.session.commit()
-        session['name'] = name # saves name to be passed to signup success page
-        return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('User with that email already exists. Try again.', category='error')
+        else:
+            name = request.form.get('name')
+            password = request.form.get('pass')
+            # TODO: add email/password requirements
+            user = User.query.filter_by(email=email).first()
+            new_user = User(name=name, email=email, password=password) # TODO: store password as hash
+            db.session.add(new_user)
+            db.session.commit()
+            session['name'] = name # saves name to be passed to signup success page
+            return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
     return render_template("signup.html")
