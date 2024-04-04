@@ -1,47 +1,44 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
-#TODO: hash password
 
 auth = Blueprint('auth', __name__)
-@auth.route('/login', methods=['GET', 'POST'])  # place '/login' in url to go to login page
+
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('pass')
+        password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
         if user:
-            if user.password == password: # TODO: change to check_password_hash = password
-                session['name'] = user.name
-                return redirect(url_for('views.loginsuccess')) # redirects to sign up succesful page defined in views   
+            if check_password_hash(user.password, password):
+                # Login success
+                flash('Logged in successfully!', category='success')
+                return redirect(url_for('views.home'))
             else:
-                flash('Invalid password', category='error')
+                flash('Incorrect password, try again.', category='error')
         else:
-            flash('User does not exist', category='error')
-    return render_template("login.html")
+            flash('Email does not exist.', category='error')
 
-@auth.route('/logout')  # logout
-def logout():
-    return "<p>Logout</p>"
+    return render_template('login.html')
 
-@auth.route('/sign-up', methods=['GET', 'POST'])  # user sign up
-def sign_up():
-    if request.method == 'POST': # creates new user from user submitted info when sign up button pressed
+@auth.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
         email = request.form.get('email')
+        name = request.form.get('name')
+        password = request.form.get('password')
+
         user = User.query.filter_by(email=email).first()
         if user:
-            flash('User with that email already exists', category='error')
+            flash('Email already exists.', category='error')
         else:
-            name = request.form.get('name')
-            password = request.form.get('pass')
-            if password != request.form.get('confirmpass'):
-                flash('Passwords do not match', category='error')
-            # TODO: add email/password requirements
-            else:
-                user = User.query.filter_by(email=email).first()
-                new_user = User(name=name, email=email, password=password) # TODO: store password as hash
-                db.session.add(new_user)
-                db.session.commit()
-                session['name'] = name # saves name to be passed to signup success page
-                return redirect(url_for('views.signupsuccess')) # redirects to sign up succesful page defined in views
-    return render_template("signup.html")
+            # Create new user with hashed password
+            new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Account created!', category='success')
+            return redirect(url_for('views.home'))
+
+    return render_template('signup.html')
