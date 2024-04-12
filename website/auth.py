@@ -9,7 +9,7 @@ auth = Blueprint('auth', __name__)
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('password')
+        password = request.form.get('pass')
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
@@ -28,14 +28,18 @@ def signup():
     if request.method == 'POST':
         email = request.form.get('email')
         name = request.form.get('name')
-        password = request.form.get('password')
+        password = request.form.get('pass')
+
+        if not password:
+            flash('Password is required.', category='error')
+            return render_template('signup.html', email=email, name=name)
 
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists.', category='error')
+            return render_template('signup.html', email=email, name=name)
         else:
-            # Create new user with hashed password
-            new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+            new_user = User(email=email, name=name, password=generate_password_hash(password, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
             flash('Account created!', category='success')
