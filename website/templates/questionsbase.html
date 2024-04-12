@@ -25,16 +25,17 @@
     </div>
   </body>
   <footer>
-    <form method="POST">
-      <input type="radio" id="strongly disagree" name="agreement"/>
+    <form method="POST" id="myForm">
+      <input type="radio" value = 4 id="strongly disagree" name="agreement"/>
       <label for="strongly disagree">strongly disagree</label>
-      <input type="radio" id="disagree" name="agreement"/>
+      <input type="radio" id="disagree" value = 2 name="agreement"/>
       <label for="disagree">disagree</label>
-      <input type="radio" id="agree" name="agreement"/>
+      <input type="radio" id="agree" value = -2 name="agreement"/>
       <label for="agree">agree</label> 
-      <input type="radio" id="strongly agree" name="agreement"/>
+      <input type="radio" id="strongly agree" value = -4 name="agreement"/>
       <label for="strongly agree">strongly agree</label>
       <button type="submit">submit</button>
+      <p>Current Score(testing purposes): {{score}}</p> <!-- TODO: delete -->
     </form>
   </footer>
 </html>
