@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="eng">
-<head>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+    <h1>Home</h1> 
+{% endblock %}
+{% block content %}
     <button> <a href="/login">Log in</a></button> <!--log in button that directs to log in page-->
     <button> <a href="/sign-up">Sign up</a></button> <!--sign up button that directs to sign up page-->
-</body>
-</html>
+{% endblock %}
