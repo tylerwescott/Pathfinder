@@ -5,6 +5,10 @@ from . import db
 
 auth = Blueprint('auth', __name__)
 
+@auth.route('/startquiz')
+def startquiz():
+    return render_template('startquiz.html')
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -15,7 +19,7 @@ def login():
             if check_password_hash(user.password, password):
                 # Login success
                 flash('Logged in successfully!', category='success')
-                return redirect(url_for('views.home'))
+                return redirect('/startquiz')
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
