@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from flask_login import login_required, current_user
 from .database import db
-from .models import QuizResult
+from .models import User, QuizResult
 from datetime import datetime
 
 views = Blueprint('views', __name__)
@@ -13,8 +13,9 @@ def incrementScore(score, value):
     return score;
 
 @views.route('/')
+@login_required
 def home():
-    return render_template("home.html")
+    return render_template('home.html', user=current_user)
 
 @views.route('/signupsuccess')
 def signupsuccess(name  = None):
