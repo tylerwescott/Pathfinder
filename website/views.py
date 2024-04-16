@@ -1,5 +1,9 @@
-from flask import Blueprint, render_template, session, url_for, request, redirect
-from .models import User, db
+from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask_login import login_required, current_user
+from .database import db
+from .models import QuizResult
+from datetime import datetime
+
 views = Blueprint('views', __name__)
 
 # adds value of user's selection to current score and returns new score as string
@@ -150,23 +154,31 @@ def question15(score = None):
     return render_template('question15.html', score=score)
 
 
-# calculates job match based on total score from questions
+def calculate_job_match(score):
+    if -60 <= score < -30:
+        return 'Product Manager'
+    elif -30 <= score < 0:
+        return 'Technical Writer/Project Manager'
+    elif 0 <= score < 30:
+        return 'QA Tester'
+    elif 30 <= score <= 60:
+        return 'Full-Stack Developer'
+    else:
+        return 'Undefined Role'
+
 @views.route('/results')
-def results(score = None):
-    score = session['score']
-    jobMatch = ''
-    if (-60 <= int(score) < -30):
-        jobMatch = 'Product Manager'
-    elif (-30 <= int(score) < 0):
-        jobMatch = 'Technical Writer/Project Manager'
-    elif (0 <= int(score) < 30):
-        jobMatch = 'QA Tester'
-    elif (30 <= int(score) <= 60):
-        jobMatch = 'Full-Stack Developer'
+@login_required
+def results():
+    score = session.get('score', 0)
+    job_match = calculate_job_match(score)
 
-    user = User.query.filter_by(id=session['user_id']).first()  # Assuming user ID is stored in session
-    if user:
-        user.job_role = jobMatch  # Save the job role to the user's record
-        db.session.commit()
+    new_result = QuizResult(
+        user_id=current_user.id,
+        score=score,
+        job_role=job_match,
+        date_taken=datetime.utcnow()
+    )
+    db.session.add(new_result)
+    db.session.commit()
 
-    return render_template('results.html', jobMatch=jobMatch, score=score)
+    return render_template('results.html', jobMatch=job_match, score=score)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from .database import db
 from flask_login import UserMixin
 
@@ -7,6 +8,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(320), unique=True)
     password = db.Column(db.String(128))
     job_role = db.Column(db.String(150))
+
+class QuizResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    score = db.Column(db.Integer)
+    date_taken = db.Column(db.DateTime, default=datetime.utcnow)
+    job_role = db.Column(db.String(100))
 
 class JobRole(db.Model):
     id = db.Column(db.Integer, primary_key=True)
