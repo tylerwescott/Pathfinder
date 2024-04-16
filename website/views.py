@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, url_for, request, redirect
+from .models import User, db
 views = Blueprint('views', __name__)
 
 # adds value of user's selection to current score and returns new score as string
@@ -152,7 +153,7 @@ def question15(score = None):
 # calculates job match based on total score from questions
 @views.route('/results')
 def results(score = None):
-    score=session['score']
+    score = session['score']
     jobMatch = ''
     if (-60 <= int(score) < -30):
         jobMatch = 'Product Manager'
@@ -162,4 +163,10 @@ def results(score = None):
         jobMatch = 'QA Tester'
     elif (30 <= int(score) <= 60):
         jobMatch = 'Full-Stack Developer'
+
+    user = User.query.filter_by(id=session['user_id']).first()  # Assuming user ID is stored in session
+    if user:
+        user.job_role = jobMatch  # Save the job role to the user's record
+        db.session.commit()
+
     return render_template('results.html', jobMatch=jobMatch, score=score)
