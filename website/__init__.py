@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+from .models import User, JobRole
+from .database import db
 
-db = SQLAlchemy() #set up database
 DB_NAME = "database.db"
 
 def create_app():
@@ -13,18 +14,32 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .models import User, JobRole
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User
-
     with app.app_context():
         db.create_all()
-    
+        insert_job_roles()
+
     return app
 
-def create_database(app): #checks if db exists. if not, creates db
+def insert_job_roles():
+    if JobRole.query.count() == 0:  # Only insert if there are no job roles already
+        roles = [
+            {"title": "Product Manager", "description": "As a Product Manager, your quiz results indicate a strong aptitude for strategic decision-making and leadership. This role involves overseeing the development and marketing of products from conception through launch. You'll be responsible for identifying customer needs, defining product vision, and working closely with engineering, marketing, and sales teams to ensure that the product aligns with business goals and user expectations."},
+            {"title": "Technical Writer/Project Manager", "description": "Your quiz results suggest you are adept at detailed communication and organization, making you ideal for roles as a Technical Writer or Project Manager. Technical Writers are crucial in making complex information understandable, creating manuals, guides, and documentation that articulate product specifications and procedures."},
+            {"title": "QA Tester", "description": "Scoring as a QA Tester reflects your analytical skills and attention to detail, essential for this role. QA Testers are vital to the software development process, responsible for ensuring software functionality by identifying bugs and issues before the product reaches the market."},
+            {"title": "Full-Stack Developer", "description": "As a Full-Stack Developer, your quiz results show proficiency in both front-end and back-end development, capable of handling all aspects of web applications. This role requires designing user interactions on websites, developing servers and databases for website functionality, and coding for mobile platforms."}
+        ]
+        for role in roles:
+            job_role = JobRole(title=role['title'], description=role['description'])
+            db.session.add(job_role)
+        db.session.commit()
+
+def create_database(app):  # Checks if db exists. If not, creates db
     if not path.exists("website/" + DB_NAME):
-        db.create_all(app=app)
-        print('Database created successfully')
+        with app.app_context():
+            db.create_all()
+            print('Database created successfully')
