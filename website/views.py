@@ -32,6 +32,28 @@ def startquiz():
         return redirect(url_for('views.question1'))
     return render_template('startquiz.html')
 
+# My (Tyler) attempt at search functionality
+@views.route('/search_results', methods=['GET', 'POST'])
+@login_required
+def search_results():
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        score_min = request.form.get('score_min')
+        score_max = request.form.get('score_max')
+
+        query = QuizResult.query
+        if user_id:
+            query = query.filter_by(user_id=user_id)
+        if start_date and end_date:
+            query = query.filter(QuizResult.date_taken.between(start_date, end_date))
+        if score_min and score_max:
+            query = query.filter(QuizResult.score.between(score_min, score_max))
+
+        results = query.all()
+        return render_template('search_results.html', results=results)
+    return render_template('search_form.html')
 
 # for each question: gets score from last session. If submit button is pressed, increments score and sends new score to next session
 @views.route('/question1', methods=['GET', 'POST'])
