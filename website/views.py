@@ -13,7 +13,6 @@ def incrementScore(score, value):
     return score;
 
 @views.route('/')
-@login_required
 def home():
     return render_template('home.html', user=current_user)
 
@@ -26,6 +25,7 @@ def loginsuccess(name =  None):
     return render_template('loginsuccess.html', name= session['name']) # shows log in success page
 
 @views.route('/startquiz', methods=['GET', 'POST'])
+@login_required
 def startquiz():
     session['score'] = '0'
     if request.method == 'POST':
@@ -57,6 +57,7 @@ def search_results():
 
 # for each question: gets score from last session. If submit button is pressed, increments score and sends new score to next session
 @views.route('/question1', methods=['GET', 'POST'])
+@login_required
 def question1(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -65,6 +66,7 @@ def question1(score = None):
     return render_template('question1.html', score=score)
 
 @views.route('/question2', methods=['GET', 'POST'])
+@login_required
 def question2(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -73,6 +75,7 @@ def question2(score = None):
     return render_template('question2.html', score=score)
 
 @views.route('/question3', methods=['GET', 'POST'])
+@login_required
 def question3(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -81,6 +84,7 @@ def question3(score = None):
     return render_template('question3.html', score=score)
 
 @views.route('/question4', methods=['GET', 'POST'])
+@login_required
 def question4(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -89,6 +93,7 @@ def question4(score = None):
     return render_template('question4.html', score=score)
 
 @views.route('/question5', methods=['GET', 'POST'])
+@login_required
 def question5(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -97,6 +102,7 @@ def question5(score = None):
     return render_template('question5.html', score=score)
 
 @views.route('/question6', methods=['GET', 'POST'])
+@login_required
 def question6(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -105,6 +111,7 @@ def question6(score = None):
     return render_template('question6.html', score=score)
 
 @views.route('/question7', methods=['GET', 'POST'])
+@login_required
 def question7(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -113,6 +120,7 @@ def question7(score = None):
     return render_template('question7.html', score=score)
 
 @views.route('/question8', methods=['GET', 'POST'])
+@login_required
 def question8(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -121,6 +129,7 @@ def question8(score = None):
     return render_template('question8.html', score=score)
 
 @views.route('/question9', methods=['GET', 'POST'])
+@login_required
 def question9(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -129,6 +138,7 @@ def question9(score = None):
     return render_template('question9.html', score=score)
 
 @views.route('/question10', methods=['GET', 'POST'])
+@login_required
 def question10(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -137,6 +147,7 @@ def question10(score = None):
     return render_template('question10.html', score=score)
 
 @views.route('/question11', methods=['GET', 'POST'])
+@login_required
 def question11(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -145,6 +156,7 @@ def question11(score = None):
     return render_template('question11.html', score=score)
 
 @views.route('/question12', methods=['GET', 'POST'])
+@login_required
 def question12(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -153,6 +165,7 @@ def question12(score = None):
     return render_template('question12.html', score=score)
 
 @views.route('/question13', methods=['GET', 'POST'])
+@login_required
 def question13(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -161,6 +174,7 @@ def question13(score = None):
     return render_template('question13.html', score=score)
 
 @views.route('/question14', methods=['GET', 'POST'])
+@login_required
 def question14(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -169,6 +183,7 @@ def question14(score = None):
     return render_template('question14.html', score=score)
 
 @views.route('/question15', methods=['GET', 'POST'])
+@login_required
 def question15(score = None):
     score=session['score']
     if request.method == 'POST':
@@ -178,13 +193,13 @@ def question15(score = None):
 
 
 def calculate_job_match(score):
-    if -60 <= score < -30:
+    if -60 <= int(score) < -30:
         return 'Product Manager'
-    elif -30 <= score < 0:
+    elif -30 <= int(score) < 0:
         return 'Technical Writer/Project Manager'
-    elif 0 <= score < 30:
+    elif 0 <= int(score) < 30:
         return 'QA Tester'
-    elif 30 <= score <= 60:
+    elif 30 <= int(score) <= 60:
         return 'Full-Stack Developer'
     else:
         return 'Undefined Role'
