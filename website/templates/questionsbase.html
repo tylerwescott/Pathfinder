@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
   {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
+    <ul class="flashes">
     {% for message in messages %}
       <li>{{ message }}</li>
     {% endfor %}
@@ -17,25 +17,27 @@
   </head>
   <style>
     input[type="radio"] {
-      display:inline-block;
+      display: inline-block;
     }
   </style>
   <body>
     <div id="content">{% block content %}{% endblock %}</div>
-    </div>
   </body>
   <footer>
     <form method="POST" id="myForm">
-      <input type="radio" value = 4 id="strongly disagree" name="agreement" checked/>
-      <label for="strongly disagree">strongly disagree</label>
-      <input type="radio" id="disagree" value = 2 name="agreement"/>
-      <label for="disagree">disagree</label>
-      <input type="radio" id="agree" value = -2 name="agreement"/>
-      <label for="agree">agree</label> 
-      <input type="radio" id="strongly agree" value = -4 name="agreement"/>
-      <label for="strongly agree">strongly agree</label>
-      <button type="submit">submit</button>
-      <p>Current Score(testing purposes): {{score}}</p> <!-- TODO: delete -->
+      <input type="radio" value="4" id="strongly-disagree" name="agreement" checked/>
+      <label for="strongly-disagree">Strongly Disagree</label>
+
+      <input type="radio" id="disagree" value="2" name="agreement"/>
+      <label for="disagree">Disagree</label>
+
+      <input type="radio" id="agree" value="-2" name="agreement"/>
+      <label for="agree">Agree</label>
+
+      <input type="radio" id="strongly-agree" value="-4" name="agreement"/>
+      <label for="strongly-agree">Strongly Agree</label>
+
+      <button type="submit">Submit</button>
     </form>
   </footer>
 </html>

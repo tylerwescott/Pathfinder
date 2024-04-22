@@ -4,6 +4,7 @@ from flask_login import login_required, current_user, login_user
 from .models import User
 from . import db
 
+SIGNUP_TEMPLATE = 'signup.html'
 auth = Blueprint('auth', __name__)
 
 @auth.route('/startquiz')
@@ -29,23 +30,22 @@ def login():
 
     return render_template('login.html')
 
-@auth.route('/sign-up', methods=['GET', 'POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         email = request.form.get('email')
-        name = request.form.get('name')
         password = request.form.get('pass')
+
         if password != request.form.get('confirmpass'):
-                flash('Passwords do not match', category='error')
+            flash('Passwords do not match', category='error')
         elif not password:
             flash('Password is required.', category='error')
-            return render_template('signup.html', email=email, name=name)
+            return render_template(SIGNUP_TEMPLATE, email=email, name=request.form.get('name'))
 
-        
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists.', category='error')
-            return render_template('signup.html', email=email, name=name)
+            return render_template(SIGNUP_TEMPLATE, email=email, name=request.form.get('name'))
         else:
             name = request.form.get('name')
             new_user = User(email=email, name=name, password=generate_password_hash(password, method='pbkdf2:sha256'))
@@ -53,5 +53,4 @@ def signup():
             db.session.commit()
             flash('Account created!', category='success')
             return redirect(url_for('views.home'))
-
-    return render_template('signup.html')
+    return render_template(SIGNUP_TEMPLATE)

@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
   {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
+    <ul class="flashes">
     {% for message in messages %}
       <li>{{ message }}</li>
     {% endfor %}
@@ -15,9 +15,6 @@
     <title>{% block title %}{% endblock %} - My Webpage</title>
     {% endblock %}
   </head>
-  <style>
-    
-  </style>
   <body>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">

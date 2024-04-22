@@ -3,11 +3,12 @@ from flask_login import login_required, current_user
 from .database import db
 from .models import User, QuizResult
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 views = Blueprint('views', __name__)
 
 # adds value of user's selection to current score and returns new score as string
-def incrementScore(score, value):
+def increment_score(score, value):
     score = str(int(score) + int(value));
     print(score)
     return score;
@@ -61,7 +62,7 @@ def search_results():
 def question1(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question2'))
     return render_template('question1.html', score=score)
 
@@ -70,7 +71,7 @@ def question1(score = None):
 def question2(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question3'))
     return render_template('question2.html', score=score)
 
@@ -79,7 +80,7 @@ def question2(score = None):
 def question3(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question4'))
     return render_template('question3.html', score=score)
 
@@ -88,7 +89,7 @@ def question3(score = None):
 def question4(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question5'))
     return render_template('question4.html', score=score)
 
@@ -97,7 +98,7 @@ def question4(score = None):
 def question5(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question6'))
     return render_template('question5.html', score=score)
 
@@ -106,7 +107,7 @@ def question5(score = None):
 def question6(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question7'))
     return render_template('question6.html', score=score)
 
@@ -115,7 +116,7 @@ def question6(score = None):
 def question7(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question8'))
     return render_template('question7.html', score=score)
 
@@ -124,7 +125,7 @@ def question7(score = None):
 def question8(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question9'))
     return render_template('question8.html', score=score)
 
@@ -133,7 +134,7 @@ def question8(score = None):
 def question9(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question10'))
     return render_template('question9.html', score=score)
 
@@ -142,7 +143,7 @@ def question9(score = None):
 def question10(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question11'))
     return render_template('question10.html', score=score)
 
@@ -151,7 +152,7 @@ def question10(score = None):
 def question11(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question12'))
     return render_template('question11.html', score=score)
 
@@ -160,7 +161,7 @@ def question11(score = None):
 def question12(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question13'))
     return render_template('question12.html', score=score)
 
@@ -169,7 +170,7 @@ def question12(score = None):
 def question13(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question14'))
     return render_template('question13.html', score=score)
 
@@ -178,7 +179,7 @@ def question13(score = None):
 def question14(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.question15'))
     return render_template('question14.html', score=score)
 
@@ -187,7 +188,7 @@ def question14(score = None):
 def question15(score = None):
     score=session['score']
     if request.method == 'POST':
-        session['score'] = incrementScore(score, request.form["agreement"])
+        session['score'] = increment_score(score, request.form["agreement"])
         return redirect(url_for('views.results'))
     return render_template('question15.html', score=score)
 
@@ -210,17 +211,21 @@ def results():
     score = session.get('score', 0)
     job_match = calculate_job_match(score)
 
+    # Using timezone-aware datetime
+    utc_now = datetime.now(ZoneInfo("UTC"))
+
     new_result = QuizResult(
         user_id=current_user.id,
         score=score,
         job_role=job_match,
-        date_taken=datetime.utcnow()
+        date_taken=utc_now  # Updated to use timezone-aware datetime
     )
     db.session.add(new_result)
     db.session.commit()
 
     current_user_result = new_result
 
+    # Fetch all users with their results for display
     users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
 
     return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
