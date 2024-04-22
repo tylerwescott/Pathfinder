@@ -219,4 +219,9 @@ def results():
     db.session.add(new_result)
     db.session.commit()
 
-    return render_template('results.html', jobMatch=job_match, score=score)
+    current_user_result = new_result
+
+    users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+
+    return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
+

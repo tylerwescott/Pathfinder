@@ -1,9 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Index{% endblock %}
+
+{% block title %}Results{% endblock %}
+
 {% block head %}
-    <h1>Results</h1> 
+    <h1>Results</h1>
 {% endblock %}
+
 {% block content %}
-    <p>Final Score(testing purposes): {{score}}</p>
-    <p>Job Match: {{jobMatch}}</p>
+    <h2>Your Results</h2>
+    <p>Name: {{ current_user.name }}</p>
+    <p>Email: {{ current_user.email }}</p>
+    <p>Final Score (testing purposes): {{ current_user_result.score }}</p>
+    <p>Job Match: {{ current_user_result.job_role }}</p>
+
+    <h2>All Users' Results</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Score</th>
+                <th>Job Match</th>
+                <th>Date Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user, result in users_with_results %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ result.score }}</td>
+                <td>{{ result.job_role }}</td>
+                <td>{{ result.date_taken.strftime("%Y-%m-%d %H:%M") }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
