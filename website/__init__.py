@@ -4,12 +4,15 @@ from flask_login import LoginManager
 from os import path
 from .models import User, JobRole
 from .database import db
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'TeamPathFinder'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key_for_development')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
 
