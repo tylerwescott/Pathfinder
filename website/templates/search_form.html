@@ -1,21 +1,23 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="=" width="device-width, initial-scale=1.0" />
-    <title>Search Form</title>
-</head>
-<body>
-    <h1>Search for Users by Career Tag</h1>
-    <form action="{{url_for('views.search_results')}}" method="post">
-        <label for="search_query">Choose a career tag:</label>
-        <select name="search_query" id="search_query">
-            <option value="Product Manager">Product Manager</option>
-            <option value="Technical Writer/Product Manager">Technical Writer/Product Manager</option>
-            <option value="QA Tester">QA Tester</option>
-            <option value="Full-Stack Developer">Full-Stack Developer</option>
-        </select>
-    </form>
-</body>
-</html>
+{% block title %}Search Form{% endblock %}
+
+{% block content %}
+<h1>Search for Users by Career Tag</h1>
+<form action="{{url_for('views.search_results')}}" method="post">
+    <label for="career_role">Choose a career tag:</label>
+    <select name="career_role" id="career_role">
+        <option value="Product Manager">Product Manager</option>
+        <option value="Technical Writer/Product Manager">Technical Writer/Product Manager</option>
+        <option value="QA Tester">QA Tester</option>
+        <option value="Full-Stack Developer">Full-Stack Developer</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+    {% block back_button %}
+<form action="{{ url_for('views.results') }}" method="get">
+    <button type="submit">Back to Results</button>
+</form>
+    {% endblock %}
+{% endblock %}
