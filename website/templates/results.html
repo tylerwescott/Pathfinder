@@ -10,6 +10,12 @@
     <p>Final Score (testing purposes): {{ current_user_result.score }}</p>
     <p>Job Match: {{ current_user_result.job_role }}</p>
 
+    {% if session.get('survey_completed') %}
+        <a href="{{ url_for('views.search_results') }}"><button>Search Users with Similar Job Roles</button></a>
+    {% else %}
+        <p>Please complete the survey to access search functionality.</p>
+    {% endif %}
+
     <h2>All Users' Results</h2>
     <table border="1">
         <caption>Table of Results: Summary of all user scores and job matches</caption>
