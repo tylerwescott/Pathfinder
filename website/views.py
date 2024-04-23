@@ -202,23 +202,33 @@ def results():
 
     # Using timezone-aware datetime
     utc_now = datetime.now()
+    result = QuizResult.query.filter_by(user_id=current_user.id).first()
+    if (result):
+        # Fetch all users with their results for display
+        users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+        current_user_result = result
 
-    new_result = QuizResult(
-        user_id=current_user.id,
-        score=score,
-        job_role=job_match,
-        date_taken=utc_now  # Updated to use timezone-aware datetime
-    )
-    db.session.add(new_result)
-    db.session.commit()
+        # renders survey completion to true for the user
+        session['survey_completed'] = True
 
-    current_user_result = new_result
+        return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
+    else:
+        new_result = QuizResult(
+            user_id=current_user.id,
+            score=score,
+            job_role=job_match,
+            date_taken=utc_now  # Updated to use timezone-aware datetime
+        )
+        db.session.add(new_result)
+        db.session.commit()
 
-    # Fetch all users with their results for display
-    users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+        current_user_result = new_result
 
-    # renders survey completion to true for the user
-    session['survey_completed'] = True
+        # Fetch all users with their results for display
+        users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
 
-    return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
+        # renders survey completion to true for the user
+        session['survey_completed'] = True
+
+        return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
 
