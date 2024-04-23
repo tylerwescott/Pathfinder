@@ -38,11 +38,9 @@ def startquiz():
 def search_results():
     if request.method == 'POST':
         # get the selected career role from the form
-        selected_role = request.form.get('career_role')
-
+        selected_role = request.form.get("career_role")
         # query database to retrieve all users with the selected career role
-        users_with_selected_role = User.query.filter_by(job_role=selected_role).all()
-
+        users_with_selected_role = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).filter_by(job_role=selected_role).all()
         return render_template('search_results.html', results=users_with_selected_role)
 
     return render_template('search_form.html')

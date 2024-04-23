@@ -7,7 +7,6 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(100))
     email = db.Column(db.String(320), unique=True)
     password = db.Column(db.String(128))
-    job_role = db.Column(db.String(150))
 
 class QuizResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
