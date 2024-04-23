@@ -5,6 +5,7 @@ from .models import User
 from . import db
 
 auth = Blueprint('auth', __name__)
+SIGNUP_TEMPLATE = 'signup.html'
 
 @auth.route('/startquiz')
 def startquiz():
@@ -37,12 +38,12 @@ def signup():
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists.', category='error')
-            return render_template("signup.html", email=email, name=request.form.get('name'))
+            return render_template(SIGNUP_TEMPLATE, email=email, name=request.form.get('name'))
         elif password != request.form.get('confirmpass'):
             flash('Passwords do not match', category='error')
         elif not password:
             flash('Password is required.', category='error')
-            return render_template("signup.html", email=email, name=request.form.get('name'))
+            return render_template(SIGNUP_TEMPLATE, email=email, name=request.form.get('name'))
         else:
             name = request.form.get('name')
             new_user = User(email=email, name=name, password=generate_password_hash(password, method='pbkdf2:sha256'))
@@ -50,4 +51,4 @@ def signup():
             db.session.commit()
             flash('Account created!', category='success')
             return redirect(url_for('views.home'))
-    return render_template("signup.html")
+    return render_template(SIGNUP_TEMPLATE)
