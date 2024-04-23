@@ -33,27 +33,18 @@ def startquiz():
         return redirect(url_for('views.question1'))
     return render_template('startquiz.html')
 
-# My (Tyler) attempt at search functionality
 @views.route('/search_results', methods=['GET', 'POST'])
 @login_required
 def search_results():
     if request.method == 'POST':
-        user_id = request.form.get('user_id')
-        start_date = request.form.get('start_date')
-        end_date = request.form.get('end_date')
-        score_min = request.form.get('score_min')
-        score_max = request.form.get('score_max')
+        # get the selected career role from the form
+        selected_role = request.form.get('career_role')
 
-        query = QuizResult.query
-        if user_id:
-            query = query.filter_by(user_id=user_id)
-        if start_date and end_date:
-            query = query.filter(QuizResult.date_taken.between(start_date, end_date))
-        if score_min and score_max:
-            query = query.filter(QuizResult.score.between(score_min, score_max))
+        # query database to retrieve all users with the selected career role
+        users_with_selected_role = User.query.filter_by(job_role=selected_role).all()
 
-        results = query.all()
-        return render_template('search_results.html', results=results)
+        return render_template('search_results.html', results=users_with_selected_role)
+
     return render_template('search_form.html')
 
 # for each question: gets score from last session. If submit button is pressed, increments score and sends new score to next session
@@ -227,6 +218,9 @@ def results():
 
     # Fetch all users with their results for display
     users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+
+    # renders survey completion to true for the user
+    session['survey_completed'] = True
 
     return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
 
