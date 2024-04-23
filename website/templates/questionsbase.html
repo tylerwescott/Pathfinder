@@ -11,13 +11,21 @@
   {% endwith %}
   <head>
     {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>{% block title %}{% endblock %} - My Webpage</title>
     {% endblock %}
   </head>
   <style>
     input[type="radio"] {
       display: inline-block;
+    }
+    h1 {
+      color:black;  
+    }
+    p {
+      margin-top: 50px;
+    }
+    body {
+      background-color: lightblue;
     }
   </style>
   <body>

@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 from flask_login import login_required, current_user
 from .database import db
 from .models import User, QuizResult
-from datetime import datetime
+from datetime import datetime, tzinfo
 from zoneinfo import ZoneInfo
 
 views = Blueprint('views', __name__)
@@ -212,7 +212,7 @@ def results():
     job_match = calculate_job_match(score)
 
     # Using timezone-aware datetime
-    utc_now = datetime.now(ZoneInfo("UTC"))
+    utc_now = datetime.now()
 
     new_result = QuizResult(
         user_id=current_user.id,
