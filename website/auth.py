@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_required, current_user, login_user
-from .models import User
+from .models import User, QuizResult
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -20,7 +20,11 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 login_user(user)
-                # Login success
+                # Check if user has already taken the quiz
+                quiz_result = QuizResult.query.filter_by(user_id=user.id).first()
+                if quiz_result:
+                    flash('You have already taken the quiz.', category='info')
+                    return redirect(url_for('views.results'))  # Redirect to results page
                 flash('Logged in successfully!', category='success')
                 return redirect(url_for('views.startquiz'))
             else:
