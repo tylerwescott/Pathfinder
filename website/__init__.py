@@ -4,9 +4,9 @@ from flask_login import LoginManager
 from os import path
 from .models import User, JobRole
 from .database import db
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
-load_dotenv()
+#load_dotenv()
 
 DB_NAME = "database.db"
 
