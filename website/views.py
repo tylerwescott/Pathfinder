@@ -37,11 +37,13 @@ def startquiz():
 @login_required
 def search_results():
     if request.method == 'POST':
-        # get the selected career role from the form
         selected_role = request.form.get('career_role')
-
-        # query database to retrieve all users with the selected career role
         users_with_selected_role = User.query.filter_by(job_role=selected_role).all()
+        print(selected_role)
+
+        # Debugging output
+        print(f"Role selected: {selected_role}")
+        print(f"Users found: {len(users_with_selected_role)}")
 
         return render_template('search_results.html', results=users_with_selected_role)
 
