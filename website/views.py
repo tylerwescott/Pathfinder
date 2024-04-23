@@ -37,14 +37,10 @@ def startquiz():
 @login_required
 def search_results():
     if request.method == 'POST':
-        selected_role = request.form.get('career_role')
-        users_with_selected_role = User.query.filter_by(job_role=selected_role).all()
-        print(selected_role)
-
-        # Debugging output
-        print(f"Role selected: {selected_role}")
-        print(f"Users found: {len(users_with_selected_role)}")
-
+        # get the selected career role from the form
+        selected_role = request.form.get("career_role")
+        # query database to retrieve all users with the selected career role
+        users_with_selected_role = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).filter_by(job_role=selected_role).all()
         return render_template('search_results.html', results=users_with_selected_role)
 
     return render_template('search_form.html')
@@ -206,23 +202,33 @@ def results():
 
     # Using timezone-aware datetime
     utc_now = datetime.now()
+    result = QuizResult.query.filter_by(user_id=current_user.id).first()
+    if (result):
+        # Fetch all users with their results for display
+        users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+        current_user_result = result
 
-    new_result = QuizResult(
-        user_id=current_user.id,
-        score=score,
-        job_role=job_match,
-        date_taken=utc_now  # Updated to use timezone-aware datetime
-    )
-    db.session.add(new_result)
-    db.session.commit()
+        # renders survey completion to true for the user
+        session['survey_completed'] = True
 
-    current_user_result = new_result
+        return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
+    else:
+        new_result = QuizResult(
+            user_id=current_user.id,
+            score=score,
+            job_role=job_match,
+            date_taken=utc_now  # Updated to use timezone-aware datetime
+        )
+        db.session.add(new_result)
+        db.session.commit()
 
-    # Fetch all users with their results for display
-    users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
+        current_user_result = new_result
 
-    # renders survey completion to true for the user
-    session['survey_completed'] = True
+        # Fetch all users with their results for display
+        users_with_results = db.session.query(User, QuizResult).join(QuizResult, User.id == QuizResult.user_id).all()
 
-    return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
+        # renders survey completion to true for the user
+        session['survey_completed'] = True
+
+        return render_template('results.html', jobMatch=job_match, score=score, user=current_user, current_user_result=current_user_result, users_with_results=users_with_results)
 

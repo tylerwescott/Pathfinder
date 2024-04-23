@@ -1,27 +1,30 @@
 {% extends "base.html" %}
+
 {% block title %}Search Results{% endblock %}
-{% block head %}
-    <h1>Search Results</h1>
-{% endblock %}
+
 {% block content %}
-    <h2>Users Matching Selected Job Role</h2>
+    <h1>Search Results</h1>
     <table border="1">
-        <caption>Table of Users: Summary of users matching the selected job role</caption>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Job Role</th>
+                <th>Job Match</th>
+                <th>Date Taken</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in results %}
+            {% for user, result in results %}
             <tr>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.job_role }}</td>
+                <td>{{ result.job_role }}</td>
+                <td>{{ result.date_taken.strftime("%Y-%m-%d %H:%M") }}</td>
             </tr>
             {% endfor %}
-        </tbody>
     </table>
+    {% block back_to_results_button %}
+    <form action="{{ url_for('views.search_results') }}" method="get">
+        <button type="submit">Back to Search</button>
+    {% endblock %}
 {% endblock %}
